@@ -1,11 +1,20 @@
+import AppError from "@errors/AppErrors";
 import UsersRepository from "../repository/UsersRepository";
-import { User } from "../types/User";
+import { IUser } from "../types/User";
 
+interface IListUser {
+  id: string;
+}
 class ListUserService {
-  async execute(): Promise<User[]> {
-    const users = UsersRepository.list()
+  async execute({ id }: IListUser): Promise<IUser | undefined> {
+    const user = await UsersRepository.findById(id);
 
-    return users;
+    console.log("My user is", user);
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    return user;
   }
 }
 

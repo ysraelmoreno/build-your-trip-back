@@ -14,11 +14,11 @@ class CreateUserService {
       throw new AppError("Email already exists", 400);
     }
 
-    const newUser = UsersRepository.create({
+    const newUser = await UsersRepository.create({
       name,
       password,
-      email
-    })
+      email,
+    });
 
     return newUser;
   }

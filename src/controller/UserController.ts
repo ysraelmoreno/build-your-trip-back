@@ -1,29 +1,32 @@
-import { Request, Response } from 'express';
-import CreateUserService from '../services/CreateUserService';
+import AppError from "@errors/AppErrors";
+import { Request, Response } from "express";
+import CreateUserService from "../services/CreateUserService";
 
-import ListUserService from '../services/ListUserService';
+import ListUserService from "../services/ListUserService";
 
 class UsersController {
-  async index(_: Request, res: Response) {
-    const listUserService = new  ListUserService();
+  async show(req: Request, res: Response) {
+    const { id } = req.params;
 
-    const showUser = await listUserService.execute();
+    if (!id) {
+      throw new AppError("User id is required", 404);
+    }
 
-    res.json(showUser);
+    const listUserService = new ListUserService();
+
+    const findUser = await listUserService.execute({ id });
+
+    return res.json(findUser);
   }
 
-  async show(req: Request, res: Response) {}
-
   async create(req: Request, res: Response) {
-      const { name, email, password } = req.body;
+    const { name, email, password } = req.body;
 
-      console.log(req.body);
+    const createUserService = new CreateUserService();
 
-      const createUserService = new CreateUserService();
+    const newUser = await createUserService.execute({ name, email, password });
 
-      const newUser = await createUserService.execute({ name, email, password })
-
-      return res.json(newUser);
+    return res.json(newUser);
   }
 }
 

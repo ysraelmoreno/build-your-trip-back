@@ -1,6 +1,8 @@
-import { v4 } from 'uuid'
-import { User } from '../types/User';
+import { IUser } from "../types/User";
+import AppError from "@errors/AppErrors";
 
+import { query } from "@database/index";
+import UsersRepo from "@database/databaseRepo/Users.repo";
 interface ICreateUser {
   name: string;
   email: string;
@@ -8,31 +10,31 @@ interface ICreateUser {
 }
 
 class UsersRepository {
-  protected users: User[] = [];
+  public async findByEmail(email: string): Promise<IUser | undefined> {
+    const rows = await UsersRepo.findOne({ select: "*", where: { email } });
 
-  public async list(): Promise<User[]> {
-    return this.users;
+    return rows[0];
   }
 
-  public async create({ email, name, password }: ICreateUser): Promise<User> {
-    const newUser = {
-      id: v4(),
-      email,
-      name,
-      password,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+  public async findById(id: string): Promise<IUser | undefined> {
+    const [row] = await UsersRepo.findOne({ select: "*", where: { id } });
 
-    this.users.push(newUser);
-
-    return newUser;
+    return row;
   }
 
-  public async findByEmail(email: string): Promise<User | undefined> {
-    const user = this.users.find(user => user.email === email);
+  public async create({ email, name, password }: ICreateUser): Promise<IUser> {
+    const findUserByEmail = await this.findByEmail(email);
 
-    return user;
+    if (findUserByEmail) {
+      throw new AppError("Email already exists", 400);
+    }
+
+    const [row] = await query(
+      "INSERT INTO users (name, email, password, isIncomplete) VALUES ($1, $2, $3, $4) RETURNING *",
+      [name, email, password, false]
+    );
+
+    return row;
   }
 }
 
