@@ -1,10 +1,4 @@
 class GenericRepo {
-  protected table: string;
-
-  constructor(table: string) {
-    this.table = table;
-  }
-
   protected constructWhereString(where: { [key: string]: string }): string {
     let stringWhere = "";
 
@@ -15,6 +9,51 @@ class GenericRepo {
       }
 
       stringWhere += `${Object.keys(where)[index]} = $${index + 1} AND `;
+    });
+
+    return stringWhere;
+  }
+
+  protected constructUpdateString(
+    update: { [key: string]: string },
+    where: { [key: string]: string }
+  ) {
+    let stringUpdate = "";
+    let accumulattor = 0;
+
+    [...Array(Object.keys(update).length)].forEach((_, index) => {
+      if (Object.keys(update).length - 1 <= index) {
+        stringUpdate += `${Object.keys(update)[index]} = $${index + 1}`;
+        accumulattor++;
+        return;
+      }
+
+      stringUpdate += `${Object.keys(update)[index]} = $${index + 1}, `;
+      accumulattor++;
+    });
+
+    const stringWhere = this.constructUpdateWhereString(where, accumulattor);
+
+    return [stringUpdate, stringWhere];
+  }
+
+  protected constructUpdateWhereString(
+    where: { [key: string]: string },
+    indexAccumulatted: number
+  ) {
+    let stringWhere = "";
+
+    [...Array(Object.keys(where).length)].forEach((_, index) => {
+      if (Object.keys(where).length - 1 <= index) {
+        indexAccumulatted++;
+        stringWhere += `${Object.keys(where)[index]} = $${indexAccumulatted}`;
+        return;
+      }
+      indexAccumulatted++;
+
+      stringWhere += `${
+        Object.keys(where)[index]
+      } = $${indexAccumulatted} AND `;
     });
 
     return stringWhere;

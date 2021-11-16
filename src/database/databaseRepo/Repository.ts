@@ -1,28 +1,19 @@
 import { query } from "@database/index";
-import { IUser } from "@appTypes/User";
 
 import GenericRepo from "./Generic.repo";
+import {
+  IFind,
+  IFindOne,
+  IGenericValues,
+  IRepository,
+} from "@database/interfaces/IRepository";
 
-interface ICreate {
-  [key: string]: any;
-}
+class Repository<T> extends GenericRepo implements IRepository<T> {
+  protected table: string;
 
-interface IFindOne {
-  select?: string;
-  where: {
-    [key: string]: any;
-  };
-}
-
-interface IFind {
-  options?: {
-    orderBy?: string;
-  };
-}
-
-class Repository<T> extends GenericRepo {
   constructor(table: string) {
-    super(table);
+    super();
+    this.table = table;
   }
 
   public async findOne({
@@ -47,7 +38,24 @@ class Repository<T> extends GenericRepo {
     return rows;
   }
 
-  public async insert(values: ICreate): Promise<T> {
+  public async update(
+    values: IGenericValues,
+    where: IGenericValues
+  ): Promise<T> {
+    const [updateString, whereString] = this.constructUpdateString(
+      values,
+      where
+    );
+
+    const [row] = await query(
+      `UPDATE ${this.table} SET ${updateString} WHERE ${whereString} RETURNING *`,
+      [...Object.values(values), ...Object.values(where)]
+    );
+
+    return row;
+  }
+
+  public async insert(values: IGenericValues): Promise<T> {
     const [insertInto, variablesToAttach] = this.constructInsertString(values);
 
     const [row] = await query(
