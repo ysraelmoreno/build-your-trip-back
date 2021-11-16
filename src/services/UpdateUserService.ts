@@ -18,6 +18,10 @@ class UpdateUserService {
       throw new AppError("User not found", 404);
     }
 
+    if (!name || !email || !password) {
+      throw new AppError("Missing fields", 400);
+    }
+
     const newData = {
       name,
       email,

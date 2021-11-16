@@ -17,7 +17,7 @@ class UsersController {
 
     const findUser = await listUserService.execute({ id });
 
-    return res.json(findUser);
+    return res.status(200).json(findUser);
   }
 
   async create(req: Request, res: Response) {
@@ -27,7 +27,7 @@ class UsersController {
 
     const newUser = await createUserService.execute({ name, email, password });
 
-    return res.json(newUser);
+    return res.status(200).json(newUser);
   }
 
   async update(req: Request, res: Response) {
@@ -42,7 +42,7 @@ class UsersController {
       password,
     });
 
-    return res.json(updatedUser);
+    return res.status(200).json(updatedUser);
   }
 }
 
