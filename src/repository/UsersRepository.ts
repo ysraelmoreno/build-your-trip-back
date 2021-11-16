@@ -71,6 +71,7 @@ class UsersRepository extends Repository<IUser> {
       name,
       password,
       isincomplete: false,
+      updatedat: new Date(),
     };
 
     const newUser = await this.update(newData, { id });
