@@ -9,7 +9,6 @@ class ListUserService {
   async execute({ id }: IListUser): Promise<IUser | undefined> {
     const user = await UsersRepository.findById(id);
 
-    console.log("My user is", user);
     if (!user) {
       throw new AppError("User not found", 404);
     }

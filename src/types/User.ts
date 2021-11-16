@@ -7,3 +7,10 @@ export interface IUser {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface ICreateUser {
+  name: string;
+  email: string;
+  password: string;
+  isIncomplete: boolean;
+}
