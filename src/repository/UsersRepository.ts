@@ -1,52 +1,47 @@
 import { IUser } from "../types/User";
 
 import Repository from "@database/databaseRepo/Repository";
+import { IUserData, IUsersRepository } from "./interfaces/IUsersRepository";
 
-interface IUserData {
-  name: string;
-  email: string;
-  password: string;
-}
-
-class UsersRepository extends Repository<IUser> {
+class UsersRepository extends Repository<IUser> implements IUsersRepository {
   constructor() {
     super("users");
   }
 
   public async findByEmail(email: string): Promise<IUser | undefined> {
-    const rows = await this.findOne({ where: { email } });
+    const user = await this.findOne({ where: { email } });
 
-    return rows;
+    return user;
   }
 
   public async findById(id: string): Promise<IUser | undefined> {
-    const row = await this.findOne({ where: { id } });
+    const user = await this.findOne({ where: { id } });
 
-    return row;
+    return user;
   }
 
   public async createSoft({
     email,
     password,
   }: Omit<IUserData, "name">): Promise<IUser> {
-    const row = await this.insert({
+    const user = await this.insert({
       email,
       password,
       isIncomplete: true,
     });
 
-    return row;
+    return user;
   }
 
   public async create({ email, name, password }: IUserData): Promise<IUser> {
-    const row = await this.insert({
+    const user = await this.insert({
       name,
       email,
       password,
       isIncomplete: false,
     });
 
-    return row;
+    return user;
   }
 
   public async updateUser(

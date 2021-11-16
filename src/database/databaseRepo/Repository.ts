@@ -2,6 +2,7 @@ import { query } from "@database/index";
 
 import GenericRepo from "./Generic.repo";
 import {
+  IFilter,
   IFind,
   IFindOne,
   IGenericValues,
@@ -14,6 +15,17 @@ class Repository<T> extends GenericRepo implements IRepository<T> {
   constructor(table: string) {
     super();
     this.table = table;
+  }
+
+  public async filter({ where, select }: IFilter): Promise<T[]> {
+    const whereString = this.constructWhereString(where);
+
+    const rows: T[] = await query(
+      `SELECT ${select} FROM ${this.table} WHERE ${whereString}`,
+      [...Object.values(where)]
+    );
+
+    return rows;
   }
 
   public async findOne({
