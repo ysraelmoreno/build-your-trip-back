@@ -28,7 +28,7 @@ class UsersRepository extends Repository<IUser> {
   public async createSoft({
     email,
     password,
-  }: Omit<IUser, "name">): Promise<IUser> {
+  }: Omit<IUserData, "name">): Promise<IUser> {
     const row = await this.insert({
       email,
       password,
@@ -58,15 +58,15 @@ class UsersRepository extends Repository<IUser> {
     if (!user) {
       return;
     }
-    // @ts-expect-error
-    delete user.createdat;
-    // @ts-expect-error
-    delete user.updatedat;
-    // @ts-expect-error
-    delete user.id;
+
+    const userInfo = {
+      email: user.email,
+      name: user.name,
+      password: user.password,
+    };
 
     const newData = {
-      ...user,
+      ...userInfo,
       email,
       name,
       password,
