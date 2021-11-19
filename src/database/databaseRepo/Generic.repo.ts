@@ -60,19 +60,18 @@ class GenericRepo {
   }
 
   protected constructInsertString(into: { [key: string]: string }) {
-    let stringInsert = "";
     let attachVariable = "";
 
     [...Array(Object.keys(into).length)].forEach((_, index) => {
       if (Object.keys(into).length - 1 <= index) {
-        stringInsert += `${Object.keys(into)[index]}`;
         attachVariable += `$${index + 1}`;
         return;
       }
 
-      stringInsert += `${Object.keys(into)[index]}, `;
       attachVariable += `$${index + 1}, `;
     });
+
+    const stringInsert = Object.keys(into).toString();
 
     return [stringInsert, attachVariable];
   }

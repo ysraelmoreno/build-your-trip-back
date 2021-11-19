@@ -11,7 +11,7 @@ export interface IFindOne {
 
 export interface IFind {
   options?: {
-    orderBy?: string;
+    orderBy?: "ASC" | "DESC";
   };
 }
 

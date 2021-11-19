@@ -2,6 +2,7 @@ import { IUser } from "../types/User";
 
 import Repository from "@database/databaseRepo/Repository";
 import { IUserData, IUsersRepository } from "./interfaces/IUsersRepository";
+import AppError from "@errors/AppErrors";
 
 class UsersRepository extends Repository<IUser> implements IUsersRepository {
   constructor() {
@@ -51,7 +52,7 @@ class UsersRepository extends Repository<IUser> implements IUsersRepository {
     const user = await this.findOne({ where: { id } });
 
     if (!user) {
-      return;
+      throw new AppError("User does not exists", 404);
     }
 
     const userInfo = {

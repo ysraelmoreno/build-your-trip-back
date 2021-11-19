@@ -68,10 +68,11 @@ class Repository<T> extends GenericRepo implements IRepository<T> {
   }
 
   public async insert(values: IGenericValues): Promise<T> {
-    const [insertInto, variablesToAttach] = this.constructInsertString(values);
+    const [insertIntoString, variablesToAttach] =
+      this.constructInsertString(values);
 
     const [row] = await query(
-      `INSERT INTO ${this.table} (${insertInto}) VALUES (${variablesToAttach}) RETURNING *`,
+      `INSERT INTO ${this.table} (${insertIntoString}) VALUES (${variablesToAttach}) RETURNING *`,
       [...Object.values(values)]
     );
 
