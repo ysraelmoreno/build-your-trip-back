@@ -21,7 +21,10 @@
       "@routes/*": ["./src/routes/*"],
       "@services/*": ["./src/services/*"],
       "@appTypes/*": ["./src/types/*"],
-      "@database/*": ["./src/database/*"]
+      "@databaseInterfaces/*": ["./src/database/interfaces/*"],
+      "@repository/*": ["./src/repository/*"],
+      "@database/*": ["./src/database/*"],
+      "@utils/*": ["./src/utils/*"]
     }
   }
 }

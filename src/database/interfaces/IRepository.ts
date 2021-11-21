@@ -4,6 +4,12 @@ export interface IGenericValues {
 
 export interface IFindOne {
   select?: string;
+  joins?: {
+    table: string;
+    on: {
+      [key: string]: any;
+    };
+  };
   where: {
     [key: string]: any;
   };

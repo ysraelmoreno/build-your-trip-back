@@ -9,7 +9,7 @@ interface ICreateSession {
   email: string;
   password: string;
 }
-class AuthenticateUserService {
+class CreateSessionService {
   async execute({ email, password }: ICreateSession) {
     const findUserByEmail = await UsersRepository.findByEmail(email);
 
@@ -17,24 +17,24 @@ class AuthenticateUserService {
       throw new AppError("Wrong email/password combination", 401);
     }
 
-    const { expiresIn, secret } = authConfig.jwt;
+    const { expiresIn: expiresAt, secret } = authConfig.jwt;
 
     const userId = findUserByEmail.id;
 
     const token = sign({}, secret, {
       subject: userId,
-      expiresIn,
+      expiresIn: expiresAt,
     });
 
-    await SessionRepository.create({
+    const newUser = await SessionRepository.create({
       userId,
       email,
       token,
-      expiresat: expiresIn,
+      expiresAt,
     });
 
-    return { user: findUserByEmail, token };
+    return newUser;
   }
 }
 
-export default new AuthenticateUserService();
+export default CreateSessionService;

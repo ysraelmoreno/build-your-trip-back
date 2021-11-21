@@ -31,11 +31,19 @@ class Repository<T> extends GenericRepo implements IRepository<T> {
   public async findOne({
     where,
     select = "*",
+    joins = { table: "", on: {} },
   }: IFindOne): Promise<T | undefined> {
     const whereString = this.constructWhereString(where);
+    const joinString = this.constructJoinString(joins.on);
+
+    const canShowJoinString = joins.table !== "";
 
     const [row] = await query(
-      `SELECT ${select} FROM ${this.table} WHERE ${whereString}`,
+      `SELECT ${select} FROM ${this.table} ${
+        canShowJoinString
+          ? `JOIN ${joins.table} ON ${joins.table}.${joinString}`
+          : ""
+      } WHERE ${whereString}`,
       [...Object.values(where)]
     );
 

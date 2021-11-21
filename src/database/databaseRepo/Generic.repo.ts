@@ -59,6 +59,16 @@ class GenericRepo {
     return stringWhere;
   }
 
+  protected constructJoinString(on: { [key: string]: string }) {
+    let stringJoin = "";
+
+    [...Array(Object.keys(on).length)].forEach((_, index) => {
+      stringJoin += `${Object.keys(on)[index]} = ${Object.values(on)[index]}`;
+    });
+
+    return stringJoin;
+  }
+
   protected constructInsertString(into: { [key: string]: string }) {
     let attachVariable = "";
 
@@ -71,7 +81,7 @@ class GenericRepo {
       attachVariable += `$${index + 1}, `;
     });
 
-    const stringInsert = Object.keys(into).toString();
+    const stringInsert = Object.keys(into).toString().toLowerCase();
 
     return [stringInsert, attachVariable];
   }

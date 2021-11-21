@@ -1,4 +1,4 @@
-import { IUser } from "../types/User";
+import { IUser } from "@appTypes/User";
 
 import Repository from "@database/databaseRepo/Repository";
 import { IUserData, IUsersRepository } from "./interfaces/IUsersRepository";
