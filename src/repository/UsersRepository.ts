@@ -1,6 +1,6 @@
 import { IUser } from "@appTypes/User";
 
-import Repository from "@database/databaseRepo/Repository";
+import Repository from "@database/repository/Repository";
 import { IUserData, IUsersRepository } from "./interfaces/IUsersRepository";
 import AppError from "@errors/AppErrors";
 

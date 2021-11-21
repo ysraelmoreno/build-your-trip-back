@@ -1,21 +1,11 @@
-import { sign } from "jsonwebtoken";
-import authConfig from "../config/auth";
-import AppError from "../errors/AppErrors";
-import UsersRepository from "@repository/UsersRepository";
-
-import Repository from "@database/databaseRepo/Repository";
+import Repository from "@database/repository/Repository";
+import getRepository from "@database/getRepository";
 
 interface ICreateSession {
   userId: string;
   email: string;
   token: string;
   expiresat: string;
-}
-
-interface IUser {
-  id: string;
-  email: string;
-  password: string;
 }
 
 interface ISession {
@@ -28,9 +18,11 @@ interface ISession {
   expiresat: Date;
 }
 
-class SessionRepository extends Repository<ISession> {
+class SessionRepository {
+  private repository: Repository<ISession>;
+
   constructor() {
-    super("sessions");
+    this.repository = getRepository("sessions");
   }
 
   public async create({
@@ -39,7 +31,7 @@ class SessionRepository extends Repository<ISession> {
     token,
     expiresat,
   }: ICreateSession): Promise<ISession> {
-    const session = await this.insert({
+    const session = await this.repository.insert({
       userId,
       email,
       token,
@@ -50,7 +42,7 @@ class SessionRepository extends Repository<ISession> {
   }
 
   public async findByToken(token: string): Promise<ISession | undefined> {
-    const findSession = await this.findOne({
+    const findSession = await this.repository.findOne({
       where: { token },
     });
 
