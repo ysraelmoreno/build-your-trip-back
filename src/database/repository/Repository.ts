@@ -36,14 +36,13 @@ class Repository<T> extends GenericRepo implements IRepository<T> {
     const whereString = this.constructWhereString(where);
     const joinString = this.constructJoinString(joins.on);
 
-    const canShowJoinString = joins.table !== "";
+    const canShowJoinString =
+      joins.table !== ""
+        ? `JOIN ${joins.table} ON ${joins.table}.${joinString}`
+        : "";
 
     const [row] = await query(
-      `SELECT ${select} FROM ${this.table} ${
-        canShowJoinString
-          ? `JOIN ${joins.table} ON ${joins.table}.${joinString}`
-          : ""
-      } WHERE ${whereString}`,
+      `SELECT ${select} FROM ${this.table} ${canShowJoinString} WHERE ${whereString}`,
       [...Object.values(where)]
     );
 
