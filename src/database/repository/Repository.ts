@@ -27,7 +27,7 @@ class Repository<T> extends GenericRepo implements IRepository<T> {
       } else {
         clearInterval(interval);
       }
-    }, 2000);
+    }, 500);
   }
 
   public async filter({ where, select }: IFilter): Promise<T[]> {

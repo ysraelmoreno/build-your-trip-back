@@ -8,9 +8,7 @@ class Connection {
   constructor(config: IDriverConfig) {
     this.driver = new Driver(config);
 
-    if (!InstanceManager.getInstance(config.name)) {
-      InstanceManager.setInstance(config.name, this.driver);
-    }
+    InstanceManager.setInstance(config.name, this.driver);
 
     return this.driver;
   }
