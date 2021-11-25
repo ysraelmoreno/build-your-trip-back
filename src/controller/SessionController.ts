@@ -13,7 +13,7 @@ class SessionController {
         password,
       });
 
-      return res.json(session);
+      return res.status(200).json(session);
     } catch (err: any) {
       return res.status(400).json({ error: err.message });
     }
@@ -36,7 +36,7 @@ class SessionController {
         token,
       });
 
-      return res.json(session);
+      return res.status(200).json(session);
     } catch (err: any) {
       return res.status(400).json({ error: err.message });
     }

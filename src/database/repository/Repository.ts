@@ -1,5 +1,3 @@
-import { query } from "@database/index";
-
 import GenericRepo from "./Generic.repo";
 import {
   IFilter,
@@ -9,18 +7,33 @@ import {
   IRepository,
 } from "@database/interfaces/IRepository";
 
+import InstanceManager from "@database/InstanceManager";
 class Repository<T> extends GenericRepo implements IRepository<T> {
   protected table: string;
+  protected connectionInstance: any;
 
   constructor(table: string) {
     super();
     this.table = table;
+
+    this.attachInstanceVerifier();
+  }
+
+  attachInstanceVerifier() {
+    const interval = setInterval(() => {
+      if (!this.connectionInstance) {
+        this.connectionInstance = InstanceManager.getInstance("default");
+        return;
+      } else {
+        clearInterval(interval);
+      }
+    }, 2000);
   }
 
   public async filter({ where, select }: IFilter): Promise<T[]> {
     const whereString = this.constructWhereString(where);
 
-    const rows: T[] = await query(
+    const rows: T[] = await this.connectionInstance.query(
       `SELECT ${select} FROM ${this.table} WHERE ${whereString}`,
       [...Object.values(where)]
     );
@@ -41,16 +54,18 @@ class Repository<T> extends GenericRepo implements IRepository<T> {
         ? `JOIN ${joins.table} ON ${joins.table}.${joinString}`
         : "";
 
-    const [row] = await query(
+    const [row] = await this.connectionInstance.query(
       `SELECT ${select} FROM ${this.table} ${canShowJoinString} WHERE ${whereString}`,
       [...Object.values(where)]
     );
+
+    console.log(row);
 
     return row;
   }
 
   public async find({ options = { orderBy: "ASC" } }: IFind): Promise<T[]> {
-    const rows: T[] = await query(
+    const rows: T[] = await this.connectionInstance.query(
       `SELECT * FROM ${this.table} ORDER BY ${options?.orderBy}`
     );
 
@@ -66,7 +81,7 @@ class Repository<T> extends GenericRepo implements IRepository<T> {
       where
     );
 
-    const [row] = await query(
+    const [row] = await this.connectionInstance.query(
       `UPDATE ${this.table} SET ${updateString} WHERE ${whereString} RETURNING *`,
       [...Object.values(values), ...Object.values(where)]
     );
@@ -78,7 +93,7 @@ class Repository<T> extends GenericRepo implements IRepository<T> {
     const [insertIntoString, variablesToAttach] =
       this.constructInsertString(values);
 
-    const [row] = await query(
+    const [row] = await this.connectionInstance.query(
       `INSERT INTO ${this.table} (${insertIntoString}) VALUES (${variablesToAttach}) RETURNING *`,
       [...Object.values(values)]
     );

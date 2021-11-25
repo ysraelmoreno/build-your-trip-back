@@ -3,6 +3,8 @@ import "express-async-errors";
 import AppError from "./errors/AppErrors";
 import routes from "./routes/routes";
 
+import "./database";
+
 import cors from "cors";
 
 const app = express();

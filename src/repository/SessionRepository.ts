@@ -1,24 +1,12 @@
 import Repository from "@database/repository/Repository";
 import getRepository from "@database/getRepository";
+import {
+  ICreateSession,
+  ISession,
+  ISessionRepository,
+} from "./interfaces/ISessionRepository";
 
-interface ICreateSession {
-  userId: string;
-  email: string;
-  token: string;
-  expiresat: string;
-}
-
-interface ISession {
-  id: string;
-  userId: string;
-  email: string;
-  token: string;
-  createdat: Date;
-  updatedat: Date;
-  expiresat: Date;
-}
-
-class SessionRepository {
+class SessionRepository implements ISessionRepository {
   private repository: Repository<ISession>;
 
   constructor() {
