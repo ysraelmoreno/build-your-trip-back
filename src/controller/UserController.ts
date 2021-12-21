@@ -1,4 +1,5 @@
 import AppError from "@errors/AppErrors";
+import UpdatePasswordService from "@services/UpdatePasswordService";
 import UpdateUserService from "@services/UpdateUserService";
 import { Request, Response } from "express";
 
@@ -40,6 +41,20 @@ class UsersController {
       name,
       email,
       password,
+    });
+
+    return res.status(200).json(updatedUser);
+  }
+
+  async passwordUpdate(req: Request, res: Response) {
+    const { password, confirmPassword } = req.body;
+    const { id } = req.params;
+
+    const updatePasswordService = new UpdatePasswordService();
+
+    const updatedUser = await updatePasswordService.execute(id, {
+      password,
+      confirmPassword,
     });
 
     return res.status(200).json(updatedUser);

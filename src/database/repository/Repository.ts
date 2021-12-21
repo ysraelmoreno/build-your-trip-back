@@ -19,14 +19,13 @@ class Repository<T> extends GenericRepo implements IRepository<T> {
     this.attachInstanceVerifier();
   }
 
-  attachInstanceVerifier() {
+  private attachInstanceVerifier() {
     const interval = setInterval(() => {
       if (!this.connectionInstance) {
         this.connectionInstance = InstanceManager.getInstance("default");
         return;
-      } else {
-        clearInterval(interval);
       }
+      clearInterval(interval);
     }, 500);
   }
 
@@ -58,8 +57,6 @@ class Repository<T> extends GenericRepo implements IRepository<T> {
       `SELECT ${select} FROM ${this.table} ${canShowJoinString} WHERE ${whereString}`,
       [...Object.values(where)]
     );
-
-    console.log(row);
 
     return row;
   }

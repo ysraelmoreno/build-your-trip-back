@@ -1,18 +1,12 @@
-export interface IGenericValues {
-  [key: string]: any;
-}
+export type IGenericValues = Record<string, any>;
 
 export interface IFindOne {
   select?: string;
   joins?: {
     table: string;
-    on: {
-      [key: string]: any;
-    };
+    on: Record<string, any>;
   };
-  where: {
-    [key: string]: any;
-  };
+  where: Record<string, any>;
 }
 
 export interface IFind {

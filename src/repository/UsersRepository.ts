@@ -3,20 +3,23 @@ import { IUser } from "@appTypes/User";
 import Repository from "@database/repository/Repository";
 import { IUserData, IUsersRepository } from "./interfaces/IUsersRepository";
 import AppError from "@errors/AppErrors";
+import getRepository from "@database/getRepository";
 
-class UsersRepository extends Repository<IUser> implements IUsersRepository {
+class UsersRepository implements IUsersRepository {
+  private repository: Repository<IUser>;
+
   constructor() {
-    super("users");
+    this.repository = getRepository("users");
   }
 
   public async findByEmail(email: string): Promise<IUser | undefined> {
-    const user = await this.findOne({ where: { email } });
+    const user = await this.repository.findOne({ where: { email } });
 
     return user;
   }
 
   public async findById(id: string): Promise<IUser | undefined> {
-    const user = await this.findOne({ where: { id } });
+    const user = await this.repository.findOne({ where: { id } });
 
     return user;
   }
@@ -25,7 +28,7 @@ class UsersRepository extends Repository<IUser> implements IUsersRepository {
     email,
     password,
   }: Omit<IUserData, "name">): Promise<IUser> {
-    const user = await this.insert({
+    const user = await this.repository.insert({
       email,
       password,
       isIncomplete: true,
@@ -35,7 +38,7 @@ class UsersRepository extends Repository<IUser> implements IUsersRepository {
   }
 
   public async create({ email, name, password }: IUserData): Promise<IUser> {
-    const user = await this.insert({
+    const user = await this.repository.insert({
       name,
       email,
       password,
@@ -45,11 +48,31 @@ class UsersRepository extends Repository<IUser> implements IUsersRepository {
     return user;
   }
 
+  public async updatePassword(
+    id: string,
+    { password }: Record<string, string>
+  ) {
+    const user = await this.repository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new AppError("User does not exists", 404);
+    }
+
+    const newData = {
+      ...user,
+      password,
+    };
+
+    const newUser = await this.repository.update(newData, { id });
+
+    return newUser;
+  }
+
   public async updateUser(
     id: string,
     { email, name, password }: IUserData
   ): Promise<IUser | undefined> {
-    const user = await this.findOne({ where: { id } });
+    const user = await this.repository.findOne({ where: { id } });
 
     if (!user) {
       throw new AppError("User does not exists", 404);
@@ -70,7 +93,7 @@ class UsersRepository extends Repository<IUser> implements IUsersRepository {
       updatedat: new Date(),
     };
 
-    const newUser = await this.update(newData, { id });
+    const newUser = await this.repository.update(newData, { id });
 
     return newUser;
   }
