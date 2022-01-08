@@ -1,5 +1,5 @@
 import { sign } from "jsonwebtoken";
-
+import { compare } from "bcryptjs";
 import authConfig from "@config/auth";
 import AppError from "../errors/AppErrors";
 import SessionRepository from "../repository/SessionRepository";
@@ -13,7 +13,13 @@ class AuthenticateUserService {
   async execute({ email, password }: ICreateSession) {
     const findUserByEmail = await UsersRepository.findByEmail(email);
 
-    if (!findUserByEmail || findUserByEmail.password !== password) {
+    if (!findUserByEmail) {
+      throw new AppError("Wrong email/password combination", 401);
+    }
+
+    const passwordMatch = compare(password, findUserByEmail?.password);
+
+    if (!passwordMatch) {
       throw new AppError("Wrong email/password combination", 401);
     }
 

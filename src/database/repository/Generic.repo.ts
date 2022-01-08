@@ -1,7 +1,5 @@
-import { GenericObject } from "@databaseInterfaces/IGenericRepo";
-
 abstract class GenericRepo {
-  protected constructWhereString(where: GenericObject): string {
+  protected constructWhereString(where: Record<string, string>): string {
     let stringWhere = "";
 
     [...Array(Object.keys(where).length)].forEach((_, index) => {
@@ -17,8 +15,8 @@ abstract class GenericRepo {
   }
 
   protected constructUpdateString(
-    update: GenericObject,
-    where: GenericObject
+    update: Record<string, string>,
+    where: Record<string, string>
   ): string[] {
     let stringUpdate = "";
     let accumulattor = 0;
@@ -40,7 +38,7 @@ abstract class GenericRepo {
   }
 
   protected constructUpdateWhereString(
-    where: GenericObject,
+    where: Record<string, string>,
     indexAccumulatted: number
   ): string {
     let stringWhere = "";
@@ -61,7 +59,7 @@ abstract class GenericRepo {
     return stringWhere;
   }
 
-  protected constructJoinString(on: GenericObject): string {
+  protected constructJoinString(on: Record<string, string>): string {
     let stringJoin = "";
 
     [...Array(Object.keys(on).length)].forEach((_, index) => {
@@ -71,7 +69,7 @@ abstract class GenericRepo {
     return stringJoin;
   }
 
-  protected constructInsertString(into: GenericObject): string[] {
+  protected constructInsertString(into: Record<string, string>): string[] {
     let attachVariable = "";
 
     [...Array(Object.keys(into).length)].forEach((_, index) => {

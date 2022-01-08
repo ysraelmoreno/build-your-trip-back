@@ -24,6 +24,12 @@ class UsersRepository implements IUsersRepository {
     return user;
   }
 
+  public async findByUsername(username: string): Promise<IUser | undefined> {
+    const user = await this.repository.findOne({ where: { username } });
+
+    return user;
+  }
+
   public async createSoft({
     email,
     password,
@@ -68,9 +74,30 @@ class UsersRepository implements IUsersRepository {
     return newUser;
   }
 
+  public async setUsernameToUser(
+    id: string,
+    { username }: { username: string }
+  ) {
+    const user = await this.repository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new AppError("User does not exists", 404);
+    }
+
+    const newData = {
+      ...user,
+      username,
+      updatedat: new Date(),
+    };
+
+    const newUser = await this.repository.update(newData, { id });
+
+    return newUser;
+  }
+
   public async updateUser(
     id: string,
-    { email, name, password }: IUserData
+    { name, password }: Omit<IUserData, "email">
   ): Promise<IUser | undefined> {
     const user = await this.repository.findOne({ where: { id } });
 
@@ -86,7 +113,6 @@ class UsersRepository implements IUsersRepository {
 
     const newData = {
       ...userInfo,
-      email,
       name,
       password,
       isincomplete: false,

@@ -1,8 +1,9 @@
 import AppError from "../errors/AppErrors";
 import UsersRepository from "../repository/UsersRepository";
+import { hash } from "bcryptjs";
 
 interface ICreateUser {
-  name: string;
+  name?: string;
   email: string;
   password: string;
 }
@@ -14,9 +15,11 @@ class CreateUserService {
       throw new AppError("Email already exists", 400);
     }
 
+    const hashedPassword = await hash(password, 8);
+
     const newUser = await UsersRepository.create({
-      name,
-      password,
+      name: name || "",
+      password: hashedPassword,
       email,
     });
 

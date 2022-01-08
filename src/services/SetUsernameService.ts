@@ -3,33 +3,37 @@ import UsersRepository from "../repository/UsersRepository";
 import { IUser } from "../types/User";
 
 interface IListUser {
-  name: string;
-  password: string;
+  username: string;
 }
-class UpdateUserService {
+class SetUsernameService {
   async execute(
     id: string,
-    { name, password }: IListUser
+    { username }: IListUser
   ): Promise<IUser | undefined> {
     const user = await UsersRepository.findById(id);
+
+    const findUsername = await UsersRepository.findByUsername(username);
 
     if (!user) {
       throw new AppError("User not found", 404);
     }
 
-    if (!name || !password) {
+    if (findUsername) {
+      throw new AppError("Username already exists", 400);
+    }
+
+    if (!username) {
       throw new AppError("Missing fields", 400);
     }
 
     const newData = {
-      name,
-      password,
+      username,
     };
 
-    const updatedUser = await UsersRepository.updateUser(id, newData);
+    const updatedUser = await UsersRepository.setUsernameToUser(id, newData);
 
     return updatedUser;
   }
 }
 
-export default UpdateUserService;
+export default SetUsernameService;
