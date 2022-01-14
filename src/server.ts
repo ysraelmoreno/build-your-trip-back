@@ -1,4 +1,6 @@
 import express, { Request, Response, NextFunction, response } from "express";
+import "dotenv/config";
+
 import "express-async-errors";
 import AppError from "./errors/AppErrors";
 import routes from "./routes/routes";

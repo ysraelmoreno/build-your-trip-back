@@ -1,5 +1,4 @@
 import makeConnection from "./connection/makeConnection";
-import "dotenv/config";
 
 console.log("Starting database");
 
